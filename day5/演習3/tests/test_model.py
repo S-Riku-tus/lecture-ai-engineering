@@ -15,12 +15,8 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 
 # テスト用データとモデルパスを定義
-DATA_PATH = os.path.join(
-    os.path.dirname(__file__), "../data/Titanic.csv"
-)
-MODEL_DIR = os.path.join(
-    os.path.dirname(__file__), "../models"
-)
+DATA_PATH = os.path.join(os.path.dirname(__file__), "../data/Titanic.csv")
+MODEL_DIR = os.path.join(os.path.dirname(__file__), "../models")
 MODEL_PATH = os.path.join(MODEL_DIR, "titanic_model.pkl")
 
 
@@ -164,9 +160,7 @@ def test_model_reproducibility(sample_data, preprocessor):
 
     pred1 = model1.predict(X_test)
     pred2 = model2.predict(X_test)
-    assert np.array_equal(pred1, pred2), (
-        "モデルの予測結果に再現性がありません"
-    )
+    assert np.array_equal(pred1, pred2), "モデルの予測結果に再現性がありません"
 
 
 def test_saved_model_accuracy():
@@ -180,9 +174,7 @@ def test_saved_model_accuracy():
     df = pd.read_csv(DATA_PATH)
     X = df.drop("Survived", axis=1)
     y = df["Survived"].astype(int)
-    _, X_test, _, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
+    _, X_test, _, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     y_pred = loaded_model.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
@@ -200,9 +192,7 @@ def test_saved_model_inference_time():
     df = pd.read_csv(DATA_PATH)
     X = df.drop("Survived", axis=1)
     y = df["Survived"].astype(int)
-    _, X_test, _, _ = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
+    _, X_test, _, _ = train_test_split(X, y, test_size=0.2, random_state=42)
 
     start = time.time()
     loaded_model.predict(X_test)
