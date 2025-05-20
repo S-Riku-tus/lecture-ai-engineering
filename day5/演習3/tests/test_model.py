@@ -121,6 +121,28 @@ def test_model_accuracy(train_model):
     assert accuracy >= 0.75, f"モデルの精度が低すぎます: {accuracy}"
 
 
+def test_saved_model_accuracy():
+    """ディスク上のモデルを読み込んで精度を検証"""
+    # モデルをロード
+    with open(MODEL_PATH, "rb") as f:
+        loaded_model = pickle.load(f)
+
+    # 同じデータ分割でテスト用データを再現
+    df = pd.read_csv(DATA_PATH)
+    X = df.drop("Survived", axis=1)
+    y = df["Survived"].astype(int)
+    _, X_test, _, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
+
+    # 推論・精度計算
+    y_pred = loaded_model.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+
+    # 基準は同じく0.75以上
+    assert accuracy >= 0.75, f"保存モデルの精度が低すぎます: {accuracy:.3f}"
+
+
 def test_model_inference_time(train_model):
     """モデルの推論時間を検証"""
     model, X_test, _ = train_model
@@ -134,6 +156,24 @@ def test_model_inference_time(train_model):
 
     # 推論時間が1秒未満であることを確認
     assert inference_time < 1.0, f"推論時間が長すぎます: {inference_time}秒"
+
+
+def test_saved_model_inference_time():
+    """ディスク上のモデルを読み込んで推論時間を測定"""
+    with open(MODEL_PATH, "rb") as f:
+        loaded_model = pickle.load(f)
+
+    # 同じサンプルデータを再利用
+    df = pd.read_csv(DATA_PATH)
+    X = df.drop("Survived", axis=1)
+    y = df["Survived"].astype(int)
+    _, X_test, _ = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    start = time.time()
+    loaded_model.predict(X_test)
+    duration = time.time() - start
+
+    assert duration < 1.0, f"ディスクから読み込んだモデルの推論時間が長すぎます: {duration:.3f}s"
 
 
 def test_model_reproducibility(sample_data, preprocessor):
