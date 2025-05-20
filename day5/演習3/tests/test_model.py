@@ -143,6 +143,7 @@ def test_saved_model_accuracy():
     assert accuracy >= 0.75, f"保存モデルの精度が低すぎます: {accuracy:.3f}"
 
 
+
 def test_model_inference_time(train_model):
     """モデルの推論時間を検証"""
     model, X_test, _ = train_model
@@ -156,6 +157,7 @@ def test_model_inference_time(train_model):
 
     # 推論時間が1秒未満であることを確認
     assert inference_time < 1.0, f"推論時間が長すぎます: {inference_time}秒"
+
 
 
 def test_saved_model_inference_time():
